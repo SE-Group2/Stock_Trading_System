@@ -9,14 +9,14 @@ class UserTable(models.Model):
 	UserID = models.CharField(max_length=30)
 	Name = models.CharField(max_length=30)
 	IDcard = models.CharField(max_length=30)
-	Gender = models.IntegerField(max_length=30)
+	Gender = models.IntegerField()
 	Occupation = models.CharField(max_length=30)
 	EduInfo = models.CharField(max_length=30)
 	HomeAddr = models.TextField(max_length=30)
 	Department = models.TextField(max_length=30)
 	Tel = models.CharField(max_length=30)
 	MailAddr = models.CharField(max_length=30)
-	Age = models.IntegerField(max_length=30)
+	Age = models.IntegerField()
 
 class SecurityAccountInfo(models.Model):
 	SecurityID = models.CharField(max_length=30)

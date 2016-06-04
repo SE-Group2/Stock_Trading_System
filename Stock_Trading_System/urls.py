@@ -18,6 +18,7 @@ from django.conf.urls import url
 from django.conf.urls.static import static
 from django.contrib import admin
 from Transaction_Client import views as Transaction_Client_views
+from search import views as search_views
 
 urlpatterns = [
     # url(r'^$', 'login.views.index', name='login'),
@@ -25,6 +26,8 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     #Transaction Client
     url(r'^TransactionClient/', Transaction_Client_views.login),
+    #search
+    url(r'^search/',search_views.main),
 ]
 
 urlpatterns += static(settings.STATIC_URL,document_root=settings.STATIC_ROOT)
