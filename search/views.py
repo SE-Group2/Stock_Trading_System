@@ -7,7 +7,7 @@ from django.db.models import Q
 # Create your views here.
 
 def main(req):
-	return render(req,'search.html')
+	return render(req,'stock.html')
 
 def refresh_5s(req):
 	stockinfo = req.stockinfo
