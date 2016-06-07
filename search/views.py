@@ -7,6 +7,7 @@ from database.models import StockInfo
 from .models import StockHistoryInfo
 from django.db.models import Q
 from datetime import datetime
+from django.http import HttpResponse,Http404
 
 # Create your views here.
 
@@ -23,24 +24,30 @@ def main(req):
 	return render(req,'stock.html')
 
 def refresh_5s(req):
-	stockinfo = req.stockinfo
-	try:
-		x = StockInfo.objects.get(Q(StockID=stockinfo)|Q(StockName=stockinfo))
-	except StockInfo.DoesNotExist:
-		pass
-	else:
-		return render(req,'refresh_5s.html',{'StockID':x.StockID,'CurrentPrice':x.CurrentPrice})
+    if req.method == 'POST':
+        stockinfo = request.POST.get('stockinfo')
+		try:
+			x = StockInfo.objects.get(Q(StockID=stockinfo)|Q(StockName=stockinfo))
+		except StockInfo.DoesNotExist:
+			pass
+		else:
+			return HttpResponse({'StockID':x.StockID,'CurrentPrice':x.CurrentPrice})        
+    else:
+        raise Http404
 
 def refresh_1min(req):
-	stockid = req.stockid
-	starttime = req.starttime
-	endtime = req.endtime
-	try:
-		x = StockHistoryInfo.objects.filter(StockID=stockid,HistoryTime__gte=starttime,HistoryTime__lte=endtime)
-	except StockInfo.DoesNotExist:
-		pass
-	else:
-		return render(req,'refresh_1min.html',{'history_info':x})
+	if req.method == 'POST':
+        stockid = req.POST.get('stockid')
+        starttime = req.POST.get('starttime')
+		endtime = req.POST.('endtime')
+		try:
+			x = StockHistoryInfo.objects.filter(StockID=stockid,HistoryTime__gte=starttime,HistoryTime__lte=endtime)
+		except StockInfo.DoesNotExist:
+			pass
+		else:
+			return HttpResponse({'history_info':x})     
+    else:
+        raise Http404
 
 def update_realtime(stockcurrentprices):
 	try:
