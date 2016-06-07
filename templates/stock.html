@@ -31,15 +31,15 @@
     </div>
     <div class="popup" id="style">
       <a class="item active" href="#" key="candles">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 26 26" width="26" height="26"><path d="M16 3v3h-2v12h2v5h1v-5h2V6h-2V3h-1zM9 4v5H7v11h2v3h1v-3h2V9h-2V4H9zm-1 6h3v9H8v-9z"></path></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="100 100 26 26" width="26" height="26"><path d="M16 3v3h-2v12h2v5h1v-5h2V6h-2V3h-1zM9 4v5H7v11h2v3h1v-3h2V9h-2V4H9zm-1 6h3v9H8v-9z"></path></svg>
         <span class="title">Candles</span><span class="shortcut"></span>
       </a>
       <a class="item" href="#" key="line">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 595.3 841.9" enable-background="new 0 0 595.3 841.9" width="26" height="26"><path d="M142.5 447.4c-102.74 102.74-83.44 83.44 0 0m399-186.2l-70.9 94.6H370.1l-136 159.6-91.6-112.3-38.5 41.4L6.5 542l41.4 41.4 94.6-94.6 91.6 112.3 162.6-186.2h103.5l88.7-118.2z"></path></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="100 100 595.3 841.9" enable-background="new 0 0 595.3 841.9" width="26" height="26"><path d="M142.5 447.4c-102.74 102.74-83.44 83.44 0 0m399-186.2l-70.9 94.6H370.1l-136 159.6-91.6-112.3-38.5 41.4L6.5 542l41.4 41.4 94.6-94.6 91.6 112.3 162.6-186.2h103.5l88.7-118.2z"></path></svg>
         <span class="title">Line</span><span class="shortcut"></span>
       </a>
       <a class="item" href="#" key="area">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 595.3 841.9" enable-background="new 0 0 595.3 841.9" width="26" height="26"><path d="M453.8 360.2l-92.1 6L234 517.7l-86.2-86.1L5.2 514.7v118.9h585.3V268.1z" opacity=".3"></path><path d="M234 508.8c-156 222.067-78 111.033 0 0zm309-276.3l-71.3 95.1h-101L236.9 488l-92.1-112.9-38.6 41.6-101 98.1 41.6 41.6 95.1-95.1L234 574.2 397.4 387h104l89.1-118.9z"></path></svg><span class="title">Area</span></a>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="100 100 595.3 841.9" enable-background="new 0 0 595.3 841.9" width="26" height="26"><path d="M453.8 360.2l-92.1 6L234 517.7l-86.2-86.1L5.2 514.7v118.9h585.3V268.1z" opacity=".3"></path><path d="M234 508.8c-156 222.067-78 111.033 0 0zm309-276.3l-71.3 95.1h-101L236.9 488l-92.1-112.9-38.6 41.6-101 98.1 41.6 41.6 95.1-95.1L234 574.2 397.4 387h104l89.1-118.9z"></path></svg><span class="title">Area</span></a>
     </div>
     <div class="popup" id="indicator">
       <a class="item active" href="#" key="ma5">
@@ -76,7 +76,7 @@
     // menu
     $(".style").click(function(e){
         $("#style").css({
-            top: "36px",
+            top: "315px",
             left: $(".style").offset().left,
             right: "auto",
             display: "block",
@@ -95,7 +95,7 @@
 
     $(".indicator").click(function(e){
         $("#indicator").css({
-            top: "36px",
+            top: "315px",
             left: $(".indicator").offset().left,
             right: "auto",
             display: "block",
@@ -118,8 +118,8 @@
     })
 
     $(window).resize(function(){
-        height = $("body").height() - $(".panel-header").height() - 20;
-        width  = $("body").width() - 10;
+        height = $("div.panel").height();
+        width  = $("div.panel").width() - 10;
         stock.width(width).height(height).redraw();
     })
 
