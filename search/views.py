@@ -62,9 +62,11 @@ def refresh_5s(req):
 		except StockInfo.DoesNotExist:
 			pass
 		else:
-			return JsonResponse({'StockID':x.StockID,'CurrentPrice':x.CurrentPrice})
+			return JsonResponse({'result':1,'StockID':x.StockID,'CurrentPrice':x.CurrentPrice})
 	else:
-		raise Http404
+		res = {}
+		res["result"] = 0
+		return JsonResponse(res)
 
 
 def refresh_1min(req):
@@ -78,9 +80,11 @@ def refresh_1min(req):
 		except StockHistoryInfo.DoesNotExist:
 			pass
 		else:
-			return JsonResponse(JsonResp(historyinfo))
+			return JsonResponse({"result":1,"data":JsonResp(historyinfo)})
 	else:
-		raise Http404
+		res = {}
+		res["result"] = 0
+		return JsonResponse(res)
 
 
 def search_history(req):
