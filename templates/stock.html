@@ -5,7 +5,7 @@
           <form id="edit-profile" class="form-horizontal" action="/test/"/>
               <label class="control-label">Input ID/Name</label>
               <div class="controls">
-                <input type="text" class="input-medium disabled" name="value" id="search_id" value="{{ID}}"/>
+                <input type="text" class="input-medium disabled" name="value" id="search_id" value="{{stockid}}"/>
                 <input type="submit" class="submit" id="sub-mit" value="Search"/>
               </div>
           </form>
@@ -23,8 +23,8 @@
               
               <tbody>
                 <tr>
-                  <td id="s_ID">{{stock_id}}</td>
-                  <td id="s_Name">{{stock_name}}</td>
+                  <td id="s_ID">{{stockid}}</td>
+                  <td id="s_Name">{{stockname}}</td>
                   <td id="s_Price"></td>
                   <td id="s_AD"></td>
                   <td id="s_State"></td>
@@ -93,7 +93,7 @@
 
 function update_RealTime_chart(){
   var search_id = document.getElementById("search_id");
-  $.post("./test/",
+  $.post("./r1min/",
         {
             value: search_id,
         },
@@ -102,19 +102,19 @@ function update_RealTime_chart(){
         },
         'json'
     );
-  setTimeout("update_RealTime_table()", 10000);
+  setTimeout("update_RealTime_chart()", 10000);
 };
 
 function update_RealTime_table(){
   var search_id = document.getElementById("search_id");
-  $.post("./test/",
+  $.post("./r5s/",
         {
             value: search_id,
         },
         function(data){
-          document.getElementById('s_Price') = data['price'];
-          document.getElementById('s_AD') = data['AD'] + '%';
-          document.getElementById('s_State') = data['State'];
+          document.getElementById('s_Price') = data['CurrentPrice'];
+          //document.getElementById('s_AD') = data['AD'] + '%';
+          //document.getElementById('s_State') = data['State'];
         },
         'json'
     );
@@ -123,13 +123,13 @@ function update_RealTime_table(){
 
 
 $(function() {
-  //update_RealTime_chart();
-  //update_RealTime_table();
+  //setTimeout("update_RealTime_chart()", 5000);
+  update_RealTime_table();
 });
 function draw_stock(data){
     //d3.json(data, function(data){
     var height = $("body").height() - $(".panel-header").height() - 20,
-        width  = $("div.panel").width() - 10,
+        width = $("div.panel").width() - 10,
         stock = d3.stock();
 
     var chart = d3.select("#chart").append("svg")

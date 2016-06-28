@@ -78,7 +78,7 @@ def refresh_1min(req):
 		except StockHistoryInfo.DoesNotExist:
 			pass
 		else:
-			return JsonResp(historyinfo)
+			return JsonResponse(JsonResp(historyinfo))
 	else:
 		raise Http404
 
