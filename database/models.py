@@ -42,3 +42,6 @@ class StockInfo(models.Model):
 	A_D = models.FloatField()
 	UpLimit = models.FloatField()
 	DownLimit = models.FloatField()
+
+	def __str__(self):
+		return self.StockName

@@ -16,3 +16,6 @@ class StockHistoryInfo(models.Model):
 	EMA26 = models.FloatField()
 	DIF = models.FloatField()
 	MACD = models.FloatField()
+
+	def __str__(self):
+		return self.StockID.StockName
