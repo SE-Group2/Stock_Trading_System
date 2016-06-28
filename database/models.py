@@ -39,5 +39,6 @@ class StockInfo(models.Model):
 	StockID = models.CharField(max_length=30)
 	StockName = models.CharField(max_length=30)
 	CurrentPrice = models.FloatField()
+	A_D = models.FloatField()
 	UpLimit = models.FloatField()
 	DownLimit = models.FloatField()

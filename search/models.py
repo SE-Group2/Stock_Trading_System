@@ -7,5 +7,12 @@ from database.models import StockInfo
 class StockHistoryInfo(models.Model):
 	StockID = models.ForeignKey(StockInfo)
 	HistoryTime = models.DateTimeField()
+	Open_value = models.FloatField()
+	Close_value = models.FloatField()
 	Highest_value = models.FloatField()
 	Lowest_value = models.FloatField()
+	Volume_value = models.FloatField()
+	EMA12 = models.FloatField()
+	EMA26 = models.FloatField()
+	DIF = models.FloatField()
+	MACD = models.FloatField()
