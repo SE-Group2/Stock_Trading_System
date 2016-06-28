@@ -36,7 +36,7 @@ def main(req):
 			x = StockInfo.objects.get(pk=pk)
 		except StockInfo.DoesNotExist:
 			pass
-	return render(req,'stock.html',{"stockid":x.StockID,"stockname":x.StockName,"data":	JsonResp(x)})
+	return render(req,'stock.html',{"stockid":x.StockID,"stockname":x.StockName,"data":json.dumps(JsonResp(x))})
 
 
 def JsonResp(x):
@@ -51,7 +51,7 @@ def JsonResp(x):
 			x = {"volume":i.Volume_value,"open":i.Open_value,"high":i.Highest_value,"close":i.Close_value,"low":i.Lowest_value,"time":s}
 			list.append(x)
 		data = {"symbol":"SHxxxxx","name":"aaaa","list":list}
-		return JsonResponse(data)
+		return data
 
 
 def refresh_5s(req):

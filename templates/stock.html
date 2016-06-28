@@ -127,7 +127,7 @@ $(function() {
   //update_RealTime_table();
 });
 function draw_stock(data){
-    d3.json(data, function(data){
+    //d3.json(data, function(data){
     var height = $("body").height() - $(".panel-header").height() - 20,
         width  = $("div.panel").width() - 10,
         stock = d3.stock();
@@ -203,10 +203,10 @@ function draw_stock(data){
       $(".open").css("color", color).html(Math.round(focus.open));
       $(".close").css("color", color).html(Math.round(focus.close));
     }
-  });
+  //});
 }
-    draw_stock("/static/sh000001.json");
-    //draw_stock(data_i);
+    //draw_stock("/static/sh000001.json");
+    draw_stock(data_i);
     </script>
 {% endblock %}
 
