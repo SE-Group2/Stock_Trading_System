@@ -28,6 +28,8 @@ urlpatterns = [
     url(r'^TransactionClient/', Transaction_Client_views.login),
     #search
     url(r'^search/',search_views.main),
+    url(r'^r1min', search_views.refresh_1min),
+    url(r'^r5s', search_views.refresh_5s),
 ]
 
 urlpatterns += static(settings.STATIC_URL,document_root=settings.STATIC_ROOT)
