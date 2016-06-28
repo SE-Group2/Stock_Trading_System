@@ -42,7 +42,7 @@ def main(req):
 def JsonResp(x):
 	list = []
 	try:
-		historyinfo = StockHistoryInfo.objects.filter(StockID=x.StockID).order_by('-HistoryTime')[:20]
+		historyinfo = StockHistoryInfo.objects.filter(StockID=x).order_by('-HistoryTime')[:20]
 	except StockHistoryInfo.DoesNotExist:
 		pass
 	else:

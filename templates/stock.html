@@ -98,7 +98,8 @@ function update_RealTime_chart(){
             value: search_id,
         },
         function(data){
-            draw_stock(data);
+          if(data.result==1)
+            draw_stock(data.data);
         },
         'json'
     );
@@ -112,7 +113,9 @@ function update_RealTime_table(){
             value: search_id,
         },
         function(data){
-          document.getElementById('s_Price') = data['CurrentPrice'];
+          if(data.result==0)
+            return;
+          document.getElementById('s_Price') = data.CurrentPrice;
           //document.getElementById('s_AD') = data['AD'] + '%';
           //document.getElementById('s_State') = data['State'];
         },
@@ -124,7 +127,7 @@ function update_RealTime_table(){
 
 $(function() {
   //setTimeout("update_RealTime_chart()", 5000);
-  update_RealTime_table();
+  //update_RealTime_table();
 });
 function draw_stock(data){
     //d3.json(data, function(data){
