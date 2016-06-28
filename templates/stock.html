@@ -1,6 +1,7 @@
 {%extends "base.html" %}
 
 {% block stockGraph %}
+
  <div class="panel">
     <div class="panel-header">
       <div class="group style">
@@ -56,9 +57,12 @@
       </a>
     </div>
     <div class="panel-main" id="chart"></div>
-  </div>
-  <script>
-  d3.json("/static/sh000001.json", function(data) {
+ </div>
+    <script>
+    var data_i = {{ data|safe }};
+
+function draw_stock(data){
+{#    d3.json(json_data, function(data) {#}
     var height = $("body").height() - $(".panel-header").height() - 20,
         width  = $("div.panel").width() - 10,
         stock = d3.stock();
@@ -72,6 +76,10 @@
 
     // price
     printPrice(data.list[data.list.length-1]);
+
+        var height = $("body").height() - $(".panel-header").height() - 20,
+        width  = $("div.panel").width() - 10;
+
 
     // menu
     $(".style").click(function(e){
@@ -130,8 +138,11 @@
       $(".open").css("color", color).html(Math.round(focus.open));
       $(".close").css("color", color).html(Math.round(focus.close));
     }
-  });
-  </script>
+{#  });#}
+}
+{#    draw_stock("/static/sh000001.json");#}
+    draw_stock(data_i[0]);
+    </script>
 {% endblock %}
 
 
