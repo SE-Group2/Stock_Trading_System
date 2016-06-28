@@ -1,6 +1,36 @@
 {%extends "base.html" %}
 
 {% block stockGraph %}
+          <h3>Real Time Chart</h3>
+          <form id="edit-profile" class="form-horizontal" action="/test/"/>
+              <label class="control-label">Input ID/Name</label>
+              <div class="controls">
+                <input type="text" class="input-medium disabled" name="value" id="search_id" value="{{ID}}"/>
+                <input type="submit" class="submit" id="sub-mit" value="Search"/>
+              </div>
+          </form>
+
+            <table class="table table-striped table-bordered">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>Present Price</th>
+                  <th>A-D</th>
+                  <th>State</th>
+                </tr>
+              </thead>
+              
+              <tbody>
+                <tr>
+                  <td id="s_ID">{{stock_id}}</td>
+                  <td id="s_Name">{{stock_name}}</td>
+                  <td id="s_Price"></td>
+                  <td id="s_AD"></td>
+                  <td id="s_State"></td>
+                </tr>
+              </tbody>
+            </table>
 
  <div class="panel">
     <div class="panel-header">
@@ -61,8 +91,43 @@
     <script>
     var data_i = {{ data|safe }};
 
+function update_RealTime_chart(){
+  var search_id = document.getElementById("search_id");
+  $.post("./test/",
+        {
+            value: search_id,
+        },
+        function(data){
+            draw_stock(data);
+        },
+        'json'
+    );
+  setTimeout("update_RealTime_table()", 10000);
+};
+
+function update_RealTime_table(){
+  var search_id = document.getElementById("search_id");
+  $.post("./test/",
+        {
+            value: search_id,
+        },
+        function(data){
+          document.getElementById('s_Price') = data['price'];
+          document.getElementById('s_AD') = data['AD'] + '%';
+          document.getElementById('s_State') = data['State'];
+        },
+        'json'
+    );
+  setTimeout("update_RealTime_table()", 5000);
+};
+
+
+$(function() {
+  //update_RealTime_chart();
+  //update_RealTime_table();
+});
 function draw_stock(data){
-{#    d3.json(json_data, function(data) {#}
+    d3.json(data, function(data){
     var height = $("body").height() - $(".panel-header").height() - 20,
         width  = $("div.panel").width() - 10,
         stock = d3.stock();
@@ -138,10 +203,10 @@ function draw_stock(data){
       $(".open").css("color", color).html(Math.round(focus.open));
       $(".close").css("color", color).html(Math.round(focus.close));
     }
-{#  });#}
+  });
 }
-{#    draw_stock("/static/sh000001.json");#}
-    draw_stock(data_i[0]);
+    draw_stock("/static/sh000001.json");
+    //draw_stock(data_i);
     </script>
 {% endblock %}
 

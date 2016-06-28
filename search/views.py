@@ -14,7 +14,6 @@ import json
 
 HasOpened = False
 
-
 def main(req):
 	global  HasOpened
 	if  not HasOpened:
@@ -22,44 +21,63 @@ def main(req):
 		updateDbRegular.setDaemon(True)
 		updateDbRegular.start()
 		HasOpened = True
-	list = [
-		{"volume": 68246139100, "open": 4660.075, "high": 4814.672, "close": 4813.798, "low": 4656.825, "chg": 156.202,
-		 "percent": 3.35, "turnrate": 0.0, "ma5": 4572.931, "ma10": 4461.213, "ma20": 4409.708, "ma30": 4357.837,
-		 "dif": 135.68, "dea": 113.37, "macd": 44.62, "time": "Mon May 25 9:00:00 +0800 2015"},
-		{"volume": 68246139100, "open": 4660.075, "high": 4814.672, "close": 4813.798, "low": 4656.825, "chg": 156.202,
-		 "percent": 3.35, "turnrate": 0.0, "ma5": 4572.931, "ma10": 4461.213, "ma20": 4409.708, "ma30": 4357.837,
-		 "dif": 135.68, "dea": 113.37, "macd": 44.62, "time": "Mon May 25 9:01:00 +0800 2015"},
-		{"volume": 68246139100, "open": 4660.075, "high": 4814.672, "close": 4813.798, "low": 4656.825, "chg": 156.202,
-		 "percent": 3.35, "turnrate": 0.0, "ma5": 4572.931, "ma10": 4461.213, "ma20": 4409.708, "ma30": 4357.837,
-		 "dif": 135.68, "dea": 113.37, "macd": 44.62, "time": "Mon May 25 9:02:00 +0800 2015"},
-		{"volume": 68246139100, "open": 4660.075, "high": 4814.672, "close": 4813.798, "low": 4656.825, "chg": 156.202,
-		 "percent": 3.35, "turnrate": 0.0, "ma5": 4572.931, "ma10": 4461.213, "ma20": 4409.708, "ma30": 4357.837,
-		 "dif": 135.68, "dea": 113.37, "macd": 44.62, "time": "Mon May 25 9:03:00 +0800 2015"},
-		{"volume": 68246139100, "open": 4660.075, "high": 4814.672, "close": 4813.798, "low": 4656.825, "chg": 156.202,
-		 "percent": 3.35, "turnrate": 0.0, "ma5": 4572.931, "ma10": 4461.213, "ma20": 4409.708, "ma30": 4357.837,
-		 "dif": 135.68, "dea": 113.37, "macd": 44.62, "time": "Mon May 25 9:04:00 +0800 2015"},
-		{"volume": 68246139100, "open": 4660.075, "high": 4814.672, "close": 4813.798, "low": 4656.825, "chg": 156.202,
-		 "percent": 3.35, "turnrate": 0.0, "ma5": 4572.931, "ma10": 4461.213, "ma20": 4409.708, "ma30": 4357.837,
-		 "dif": 135.68, "dea": 113.37, "macd": 44.62, "time": "Mon May 25 9:05:00 +0800 2015"},
-		{"volume": 68246139100, "open": 4660.075, "high": 4814.672, "close": 4813.798, "low": 4656.825, "chg": 156.202,
-		 "percent": 3.35, "turnrate": 0.0, "ma5": 4572.931, "ma10": 4461.213, "ma20": 4409.708, "ma30": 4357.837,
-		 "dif": 135.68, "dea": 113.37, "macd": 44.62, "time": "Mon May 25 9:06:00 +0800 2015"},
-		{"volume": 68246139100, "open": 4660.075, "high": 4814.672, "close": 4813.798, "low": 4656.825, "chg": 156.202,
-		 "percent": 3.35, "turnrate": 0.0, "ma5": 4572.931, "ma10": 4461.213, "ma20": 4409.708, "ma30": 4357.837,
-		 "dif": 135.68, "dea": 113.37, "macd": 44.62, "time": "Mon May 25 9:07:00 +0800 2015"},
-		{"volume": 68246139100, "open": 4660.075, "high": 4814.672, "close": 4813.798, "low": 4656.825, "chg": 156.202,
-		 "percent": 3.35, "turnrate": 0.0, "ma5": 4572.931, "ma10": 4461.213, "ma20": 4409.708, "ma30": 4357.837,
-		 "dif": 135.68, "dea": 113.37, "macd": 44.62, "time": "Mon May 25 9:08:00 +0800 2015"},
-		{"volume": 68246139100, "open": 4660.075, "high": 4814.672, "close": 4813.798, "low": 4656.825, "chg": 156.202,
-		 "percent": 3.35, "turnrate": 0.0, "ma5": 4572.931, "ma10": 4461.213, "ma20": 4409.708, "ma30": 4357.837,
-		 "dif": 135.68, "dea": 113.37, "macd": 44.62, "time": "Mon May 25 9:09:00 +0800 2015"},
-		{"volume": 68246139100, "open": 4660.075, "high": 4814.672, "close": 4813.798, "low": 4656.825, "chg": 156.202,
-		 "percent": 3.35, "turnrate": 0.0, "ma5": 4572.931, "ma10": 4461.213, "ma20": 4409.708, "ma30": 4357.837,
-		 "dif": 135.68, "dea": 113.37, "macd": 44.62, "time": "Mon May 25 9:10:00 +0800 2015"}
-	]
-	data = {"symbol": "SHxxxxx", "name": "aaaa", "list": list},
-	return render(req, 'stock.html', {"data": json.dumps(data)})
+	list = []
+	for i in xrange(10):
+		dt = datetime.now()
+		dt_change = dt.replace(hour=i/60,minute=i%60)
+		s = dt_change.strftime("%a %b %d %H:%M:%S +0800 %Y")
+		x = {"volume":39100,"open":3*i,"high":10*i,"close":5*i,"low":i,"chg":0,"percent":0.44,"turnrate":0.0,"ma5":2958.983,"ma10":3077.258,"ma20":3322.457,"ma30":3384.161,"dif":-160.34,"dea":-110.22,"macd":-100.24,"time":s}
+		list.append(x)
+	data = {"symbol":"SHxxxxx","name":"aaaa","list":list}
+	return render(req,'stock.html',{"data":json.dumps(data)})
 
+
+#
+# def main(req):
+# 	global  HasOpened
+# 	if  not HasOpened:
+# 		updateDbRegular = UpdateDbRegular()
+# 		updateDbRegular.setDaemon(True)
+# 		updateDbRegular.start()
+# 		HasOpened = True
+# 	list = [
+# 		{"volume": 68246139100, "open": 4660.075, "high": 4814.672, "close": 4813.798, "low": 4656.825, "chg": 156.202,
+# 		 "percent": 3.35, "turnrate": 0.0, "ma5": 4572.931, "ma10": 4461.213, "ma20": 4409.708, "ma30": 4357.837,
+# 		 "dif": 135.68, "dea": 113.37, "macd": 44.62, "time": "Mon May 25 9:00:00 +0800 2015"},
+# 		{"volume": 68246139100, "open": 4660.075, "high": 4814.672, "close": 4813.798, "low": 4656.825, "chg": 156.202,
+# 		 "percent": 3.35, "turnrate": 0.0, "ma5": 4572.931, "ma10": 4461.213, "ma20": 4409.708, "ma30": 4357.837,
+# 		 "dif": 135.68, "dea": 113.37, "macd": 44.62, "time": "Mon May 25 9:01:00 +0800 2015"},
+# 		{"volume": 68246139100, "open": 4660.075, "high": 4814.672, "close": 4813.798, "low": 4656.825, "chg": 156.202,
+# 		 "percent": 3.35, "turnrate": 0.0, "ma5": 4572.931, "ma10": 4461.213, "ma20": 4409.708, "ma30": 4357.837,
+# 		 "dif": 135.68, "dea": 113.37, "macd": 44.62, "time": "Mon May 25 9:02:00 +0800 2015"},
+# 		{"volume": 68246139100, "open": 4660.075, "high": 4814.672, "close": 4813.798, "low": 4656.825, "chg": 156.202,
+# 		 "percent": 3.35, "turnrate": 0.0, "ma5": 4572.931, "ma10": 4461.213, "ma20": 4409.708, "ma30": 4357.837,
+# 		 "dif": 135.68, "dea": 113.37, "macd": 44.62, "time": "Mon May 25 9:03:00 +0800 2015"},
+# 		{"volume": 68246139100, "open": 4660.075, "high": 4814.672, "close": 4813.798, "low": 4656.825, "chg": 156.202,
+# 		 "percent": 3.35, "turnrate": 0.0, "ma5": 4572.931, "ma10": 4461.213, "ma20": 4409.708, "ma30": 4357.837,
+# 		 "dif": 135.68, "dea": 113.37, "macd": 44.62, "time": "Mon May 25 9:04:00 +0800 2015"},
+# 		{"volume": 68246139100, "open": 4660.075, "high": 4814.672, "close": 4813.798, "low": 4656.825, "chg": 156.202,
+# 		 "percent": 3.35, "turnrate": 0.0, "ma5": 4572.931, "ma10": 4461.213, "ma20": 4409.708, "ma30": 4357.837,
+# 		 "dif": 135.68, "dea": 113.37, "macd": 44.62, "time": "Mon May 25 9:05:00 +0800 2015"},
+# 		{"volume": 68246139100, "open": 4660.075, "high": 4814.672, "close": 4813.798, "low": 4656.825, "chg": 156.202,
+# 		 "percent": 3.35, "turnrate": 0.0, "ma5": 4572.931, "ma10": 4461.213, "ma20": 4409.708, "ma30": 4357.837,
+# 		 "dif": 135.68, "dea": 113.37, "macd": 44.62, "time": "Mon May 25 9:06:00 +0800 2015"},
+# 		{"volume": 68246139100, "open": 4660.075, "high": 4814.672, "close": 4813.798, "low": 4656.825, "chg": 156.202,
+# 		 "percent": 3.35, "turnrate": 0.0, "ma5": 4572.931, "ma10": 4461.213, "ma20": 4409.708, "ma30": 4357.837,
+# 		 "dif": 135.68, "dea": 113.37, "macd": 44.62, "time": "Mon May 25 9:07:00 +0800 2015"},
+# 		{"volume": 68246139100, "open": 4660.075, "high": 4814.672, "close": 4813.798, "low": 4656.825, "chg": 156.202,
+# 		 "percent": 3.35, "turnrate": 0.0, "ma5": 4572.931, "ma10": 4461.213, "ma20": 4409.708, "ma30": 4357.837,
+# 		 "dif": 135.68, "dea": 113.37, "macd": 44.62, "time": "Mon May 25 9:08:00 +0800 2015"},
+# 		{"volume": 68246139100, "open": 4660.075, "high": 4814.672, "close": 4813.798, "low": 4656.825, "chg": 156.202,
+# 		 "percent": 3.35, "turnrate": 0.0, "ma5": 4572.931, "ma10": 4461.213, "ma20": 4409.708, "ma30": 4357.837,
+# 		 "dif": 135.68, "dea": 113.37, "macd": 44.62, "time": "Mon May 25 9:09:00 +0800 2015"},
+# 		{"volume": 68246139100, "open": 4660.075, "high": 4814.672, "close": 4813.798, "low": 4656.825, "chg": 156.202,
+# 		 "percent": 3.35, "turnrate": 0.0, "ma5": 4572.931, "ma10": 4461.213, "ma20": 4409.708, "ma30": 4357.837,
+# 		 "dif": 135.68, "dea": 113.37, "macd": 44.62, "time": "Mon May 25 9:10:00 +0800 2015"}
+# 	]
+# 	data = {"symbol": "SHxxxxx", "name": "aaaa", "list": list},
+# 	return render(req, 'stock.html', {"data": json.dumps(data)})
+#
 
 def refresh_5s(req):
 	if req.method == 'POST':
