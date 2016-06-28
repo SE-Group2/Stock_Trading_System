@@ -8,11 +8,14 @@ from .models import StockHistoryInfo
 from django.db.models import Q
 from datetime import datetime
 from django.http import HttpResponse,Http404
+from django.http import JsonResponse
 import json
+import random
 
 # Create your views here.
 
 HasOpened = False
+
 
 def main(req):
 	global  HasOpened
@@ -21,78 +24,66 @@ def main(req):
 		updateDbRegular.setDaemon(True)
 		updateDbRegular.start()
 		HasOpened = True
+	if req.method == 'POST':
+		stockinfo = req.POST.get('value')
+		try:
+			x = StockInfo.objects.get(Q(StockID=stockinfo)|Q(StockName=stockinfo))
+		except StockInfo.DoesNotExist:
+			pass
+	else:
+		pk = random.randint(1,StockInfo.objects.count())
+		try:
+			x = StockInfo.objects.get(pk=pk)
+		except StockInfo.DoesNotExist:
+			pass
+	return render(req,'stock.html',{"stockid":x.StockID,"stockname":x.StockName,"data":	JsonResp(x)})
+
+
+def JsonResp(x):
 	list = []
-	for i in xrange(10):
-		dt = datetime.now()
-		dt_change = dt.replace(hour=i/60,minute=i%60)
-		s = dt_change.strftime("%a %b %d %H:%M:%S +0800 %Y")
-		x = {"volume":39100,"open":3*i,"high":10*i,"close":5*i,"low":i,"chg":0,"percent":0.44,"turnrate":0.0,"ma5":2958.983,"ma10":3077.258,"ma20":3322.457,"ma30":3384.161,"dif":-160.34,"dea":-110.22,"macd":-100.24,"time":s}
-		list.append(x)
-	data = {"symbol":"SHxxxxx","name":"aaaa","list":list}
-	return render(req,'stock.html',{"data":json.dumps(data)})
+	try:
+		historyinfo = StockHistoryInfo.objects.filter(StockID=x.StockID).order_by('-HistoryTime')[:20]
+	except StockHistoryInfo.DoesNotExist:
+		pass
+	else:
+		for i in historyinfo:
+			s = i.HistoryTime.strftime("%a %b %d %H:%M:%S +0800 %Y")
+			x = {"volume":i.Volume_value,"open":i.Open_value,"high":i.Highest_value,"close":i.Close_value,"low":i.Lowest_value,"time":s}
+			list.append(x)
+		data = {"symbol":"SHxxxxx","name":"aaaa","list":list}
+		return JsonResponse(data)
 
-
-#
-# def main(req):
-# 	global  HasOpened
-# 	if  not HasOpened:
-# 		updateDbRegular = UpdateDbRegular()
-# 		updateDbRegular.setDaemon(True)
-# 		updateDbRegular.start()
-# 		HasOpened = True
-# 	list = [
-# 		{"volume": 68246139100, "open": 4660.075, "high": 4814.672, "close": 4813.798, "low": 4656.825, "chg": 156.202,
-# 		 "percent": 3.35, "turnrate": 0.0, "ma5": 4572.931, "ma10": 4461.213, "ma20": 4409.708, "ma30": 4357.837,
-# 		 "dif": 135.68, "dea": 113.37, "macd": 44.62, "time": "Mon May 25 9:00:00 +0800 2015"},
-# 		{"volume": 68246139100, "open": 4660.075, "high": 4814.672, "close": 4813.798, "low": 4656.825, "chg": 156.202,
-# 		 "percent": 3.35, "turnrate": 0.0, "ma5": 4572.931, "ma10": 4461.213, "ma20": 4409.708, "ma30": 4357.837,
-# 		 "dif": 135.68, "dea": 113.37, "macd": 44.62, "time": "Mon May 25 9:01:00 +0800 2015"},
-# 		{"volume": 68246139100, "open": 4660.075, "high": 4814.672, "close": 4813.798, "low": 4656.825, "chg": 156.202,
-# 		 "percent": 3.35, "turnrate": 0.0, "ma5": 4572.931, "ma10": 4461.213, "ma20": 4409.708, "ma30": 4357.837,
-# 		 "dif": 135.68, "dea": 113.37, "macd": 44.62, "time": "Mon May 25 9:02:00 +0800 2015"},
-# 		{"volume": 68246139100, "open": 4660.075, "high": 4814.672, "close": 4813.798, "low": 4656.825, "chg": 156.202,
-# 		 "percent": 3.35, "turnrate": 0.0, "ma5": 4572.931, "ma10": 4461.213, "ma20": 4409.708, "ma30": 4357.837,
-# 		 "dif": 135.68, "dea": 113.37, "macd": 44.62, "time": "Mon May 25 9:03:00 +0800 2015"},
-# 		{"volume": 68246139100, "open": 4660.075, "high": 4814.672, "close": 4813.798, "low": 4656.825, "chg": 156.202,
-# 		 "percent": 3.35, "turnrate": 0.0, "ma5": 4572.931, "ma10": 4461.213, "ma20": 4409.708, "ma30": 4357.837,
-# 		 "dif": 135.68, "dea": 113.37, "macd": 44.62, "time": "Mon May 25 9:04:00 +0800 2015"},
-# 		{"volume": 68246139100, "open": 4660.075, "high": 4814.672, "close": 4813.798, "low": 4656.825, "chg": 156.202,
-# 		 "percent": 3.35, "turnrate": 0.0, "ma5": 4572.931, "ma10": 4461.213, "ma20": 4409.708, "ma30": 4357.837,
-# 		 "dif": 135.68, "dea": 113.37, "macd": 44.62, "time": "Mon May 25 9:05:00 +0800 2015"},
-# 		{"volume": 68246139100, "open": 4660.075, "high": 4814.672, "close": 4813.798, "low": 4656.825, "chg": 156.202,
-# 		 "percent": 3.35, "turnrate": 0.0, "ma5": 4572.931, "ma10": 4461.213, "ma20": 4409.708, "ma30": 4357.837,
-# 		 "dif": 135.68, "dea": 113.37, "macd": 44.62, "time": "Mon May 25 9:06:00 +0800 2015"},
-# 		{"volume": 68246139100, "open": 4660.075, "high": 4814.672, "close": 4813.798, "low": 4656.825, "chg": 156.202,
-# 		 "percent": 3.35, "turnrate": 0.0, "ma5": 4572.931, "ma10": 4461.213, "ma20": 4409.708, "ma30": 4357.837,
-# 		 "dif": 135.68, "dea": 113.37, "macd": 44.62, "time": "Mon May 25 9:07:00 +0800 2015"},
-# 		{"volume": 68246139100, "open": 4660.075, "high": 4814.672, "close": 4813.798, "low": 4656.825, "chg": 156.202,
-# 		 "percent": 3.35, "turnrate": 0.0, "ma5": 4572.931, "ma10": 4461.213, "ma20": 4409.708, "ma30": 4357.837,
-# 		 "dif": 135.68, "dea": 113.37, "macd": 44.62, "time": "Mon May 25 9:08:00 +0800 2015"},
-# 		{"volume": 68246139100, "open": 4660.075, "high": 4814.672, "close": 4813.798, "low": 4656.825, "chg": 156.202,
-# 		 "percent": 3.35, "turnrate": 0.0, "ma5": 4572.931, "ma10": 4461.213, "ma20": 4409.708, "ma30": 4357.837,
-# 		 "dif": 135.68, "dea": 113.37, "macd": 44.62, "time": "Mon May 25 9:09:00 +0800 2015"},
-# 		{"volume": 68246139100, "open": 4660.075, "high": 4814.672, "close": 4813.798, "low": 4656.825, "chg": 156.202,
-# 		 "percent": 3.35, "turnrate": 0.0, "ma5": 4572.931, "ma10": 4461.213, "ma20": 4409.708, "ma30": 4357.837,
-# 		 "dif": 135.68, "dea": 113.37, "macd": 44.62, "time": "Mon May 25 9:10:00 +0800 2015"}
-# 	]
-# 	data = {"symbol": "SHxxxxx", "name": "aaaa", "list": list},
-# 	return render(req, 'stock.html', {"data": json.dumps(data)})
-#
 
 def refresh_5s(req):
 	if req.method == 'POST':
-		stockinfo = request.POST.get('stockinfo')
+		stockinfo = req.POST.get('value')
 		try:
 			x = StockInfo.objects.get(Q(StockID=stockinfo)|Q(StockName=stockinfo))
 		except StockInfo.DoesNotExist:
 			pass
 		else:
-			return HttpResponse({'StockID':x.StockID,'CurrentPrice':x.CurrentPrice})
+			return JsonResponse({'StockID':x.StockID,'CurrentPrice':x.CurrentPrice})
 	else:
 		raise Http404
 
 
 def refresh_1min(req):
+	if req.method == 'POST':
+		stockinfo = req.POST.get('value')
+		try:
+			x = StockInfo.objects.get(Q(StockID=stockinfo)|Q(StockName=stockinfo))
+			historyinfo = StockHistoryInfo.objects.filter(StockID=x.StockID).order_by('-HistoryTime')[:20]
+		except StockInfo.DoesNotExist:
+			pass
+		except StockHistoryInfo.DoesNotExist:
+			pass
+		else:
+			return JsonResp(historyinfo)
+	else:
+		raise Http404
+
+
+def search_history(req):
 	if req.method == 'POST':
 		stockid = req.POST.get('stockid')
 		starttime = req.POST.get('starttime')
@@ -123,6 +114,7 @@ def insert_history(stockhistoryinfo):
 			historytime = stockhistoryinfo[stockid][0]
 			highestvalue = stockhistoryinfo[stockid][1]
 			lowestvalue = stockhistoryinfo[stockid][2]
+
 			x = StockHistoryInfo(StockID=StockInfo.objects.get(StockID="111111"),HistoryTime=historytime,Highest_value=highestvalue,Lowest_value=lowestvalue)
 			x.save()
 	except StockInfo.DoesNotExist:
@@ -143,4 +135,3 @@ class UpdateDbRegular(threading.Thread):
 			# print(data)
 			update_realtime(data)
 			sleep(5)
-
