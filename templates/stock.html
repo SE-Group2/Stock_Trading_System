@@ -92,23 +92,27 @@
     var data_i = {{ data|safe }};
 
 function update_RealTime_chart(){
-  var search_id = document.getElementById("search_id");
-  $.post("./r1min/",
+  var search_id = document.getElementById("search_id").value;
+  $.post("../r1min/",
         {
             value: search_id,
         },
         function(data){
-          if(data.result==1)
+          if(data.result==1){
+            var a = document.getElementById("chart");
+            console.log(a.firstChild);
+            a.removeChild(a.firstChild);
             draw_stock(data.data);
+          }
         },
         'json'
     );
-  setTimeout("update_RealTime_chart()", 10000);
+  setTimeout("update_RealTime_chart()", 1000);
 };
 
 function update_RealTime_table(){
-  var search_id = document.getElementById("search_id");
-  $.post("./r5s/",
+  var search_id = document.getElementById("search_id").value;
+  $.post("../r5s/",
         {
             value: search_id,
         },
@@ -126,7 +130,7 @@ function update_RealTime_table(){
 
 
 $(function() {
-  //setTimeout("update_RealTime_chart()", 5000);
+  setTimeout("update_RealTime_chart()", 1000);
   //update_RealTime_table();
 });
 function draw_stock(data){
