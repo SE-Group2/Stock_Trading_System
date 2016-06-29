@@ -103,7 +103,7 @@ function update_RealTime_chart(){
           if(data.result==1){
             var a = document.getElementById("chart");
             //console.log(a.firstChild);
-            //d3.select("#chart").find("svg").datum(data.data).redraw;
+            // d3.select("#chart").find("svg").datum(data.data).redraw;
             draw_stock(data.data);
           }
         },
@@ -119,7 +119,6 @@ function update_RealTime_table(){
             value: search_id,
         },
         function(data){
-          console.log(data);
           if(data.result==0)
             return;
           document.getElementById('s_Price').innerHTML = Math.round(data.CurrentPrice*100)/100;
@@ -136,9 +135,9 @@ $(function() {
   setTimeout("update_RealTime_chart()", 1000);
   update_RealTime_table();
 });
-var a = 1;
-var stock = d3.stock();
+var a = 1, b = 1;
 function draw_stock(data){
+    var stock = d3.stock();
     //d3.json(data, function(data){
     var height = 500;//$("body").height() - $(".panel-header").height() - 20;
     var width = $("div.panel").width() - 10;
@@ -230,6 +229,100 @@ function draw_stock(data){
     }
   //});
 }
+
+function draw_stock2(data){
+    var stock = d3.stock();
+    //d3.json(data, function(data){
+    var height = 500;//$("body").height() - $(".panel-header").height() - 20;
+    var width = $("div.panel").width() - 10;
+    var panel;
+    var chart;
+    if(b==1){
+      chart = d3.select("#chart2").append("svg")
+        .attr("width", width)
+        .attr("height", height)
+        .attr('class', 'chart')
+        .attr('id','my_svg2')
+        .datum(data);
+      b = 0;
+    } 
+    else{
+      var ms = document.getElementById("my_svg2");
+      while(ms.hasChildNodes()) //当div下还存在子节点时 循环继续
+        ms.removeChild(ms.firstChild);
+      ms.innerHTML = "";
+      chart = d3.select("#chart2").selectAll("svg")
+        .datum(data);
+    }
+    //console.log(data.list[0].time);
+    var panel = stock(chart);
+
+    // price
+    printPrice(data.list[data.list.length-1]);
+
+        var height = $("body").height() - $(".panel-header").height() - 20,
+        width  = $("div.panel").width() - 10;
+
+
+    // menu
+    $(".style").click(function(e){
+        $("#style").css({
+            top: "315px",
+            left: $(".style").offset().left,
+            right: "auto",
+            display: "block",
+        });
+
+        $(document).one("click", function(){
+            $("#style").css({display: "none"});
+        });
+        e.stopPropagation();
+    });
+
+    $("#style a").click(function(){
+        $(".style .widget").html($(this).find("svg").prop("outerHTML"));
+        panel.style($(this).attr("key")).drawPrice();
+    });
+
+    $(".indicator").click(function(e){
+        $("#indicator").css({
+            top: "315px",
+            left: $(".indicator").offset().left,
+            right: "auto",
+            display: "block",
+        });
+
+
+        $(document).one("click", function(){
+            $("#indicator").css({display: "none"});
+        });
+        e.stopPropagation();
+    });
+
+    $("#indicator a").click(function(){
+        panel.indicator($(this).attr("key"));
+    });
+
+    $("#chart2").on("mousemove", function(){
+        var focus = panel.focus();
+        printPrice(focus);
+    })
+
+    $(window).resize(function(){
+        height = 500;//$("div.panel").height();
+        width  = $("div.panel").width() - 10;
+        stock.width(width).height(height).redraw();
+    })
+
+    function printPrice(focus) {
+      var color = focus.open > focus.close ? "green": "red";
+      $(".high").css("color", color).html(Math.round(focus.high));
+      $(".low").css("color", color).html(Math.round(focus.low));
+      $(".open").css("color", color).html(Math.round(focus.open));
+      $(".close").css("color", color).html(Math.round(focus.close));
+    }
+  //});
+}
     //draw_stock("/static/sh000001.json");
     draw_stock(data_i);
     if({{flag}}==1) alert("该股票不存在");
@@ -252,7 +345,9 @@ function draw_stock(data){
       </div>
   <br></br>
 </form>
-
+<div class="panel">
+<div class="panel-main" id="chart2"></div>
+</div>
 <script>
   $('#sub-mit1').click(function() {
     var stockInfo = $('#search1').val();
@@ -265,6 +360,8 @@ function draw_stock(data){
       data: {stockInfo:stockInfo, searchTime: searchTime},
       success: function(result) {
         console.log(result);
+        draw_stock2(result.HistoryInfo);
+
       }
     });
     return false;
