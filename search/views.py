@@ -148,8 +148,13 @@ class UpdateDbRegular(threading.Thread):
 		self.a = 0
 
 	def run(self):
-		count = 0;
-		stockid = ["111111","222222","333333"]
+		count = 0
+		stockid = []
+		sl = StockInfo.objects.all()
+		for i in sl:
+			stockid.append(i.StockID)
+		lg = len(sl)
+		# stockid = ["111111","222222","333333"]
 		openvalue = []
 		closevalue = []
 		maxvalue = []
@@ -158,7 +163,7 @@ class UpdateDbRegular(threading.Thread):
 		data = {}
 		currentprice = []
 		print "Thread start"
-		for i in xrange(3):
+		for i in xrange(lg):
 			openvalue.append(10)
 			closevalue.append(10)
 			maxvalue.append(0)
@@ -167,7 +172,7 @@ class UpdateDbRegular(threading.Thread):
 			currentprice.append(10)
 
 		while (True):
-			for i in xrange(3):
+			for i in xrange(lg):
 				A_D = random.random()*0.2-0.1
 				if currentprice[i] <= 5 and A_D <0:
 					A_D = -A_D;
@@ -183,7 +188,7 @@ class UpdateDbRegular(threading.Thread):
 
 			if count%12==11:
 				dt = datetime.now()
-				for i in xrange(3):
+				for i in xrange(lg):
 					openvalue[i] = closevalue[i]
 					closevalue[i] = currentprice[i]
 					volume[i] = random.randint(100,1000)
