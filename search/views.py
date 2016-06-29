@@ -91,20 +91,24 @@ def refresh_1min(req):
 		return JsonResponse(res)
 
 
+@csrf_exempt
 def search_history(req):
 	if req.method == 'POST':
-		stockinfo = req.POST.get('value')
-		starttime = req.POST.get('starttime')
-		endtime = req.POST.get('endtime')
+		stockinfo = req.POST.get('stockInfo')
+		tt = req.POST.get('searchTime')
+		t = datetime.strptime(tt,'%Y-%m-%d')
 		try:
 			x = StockInfo.objects.get(Q(StockID=stockinfo)|Q(StockName=stockinfo))
-			historyinfo = StockHistoryInfo.objects.filter(StockID=x,HistoryTime__gte=starttime,HistoryTime__lte=endtime).order_by('-HistoryTime')[:100]
+			t1 = datetime(year=t.year,month=t.month,day=t.day)
+			t2 = datetime(year=t.year,month=t.month,day=t.day,hour=23,minute=59,second=59)
+			historyinfo = StockHistoryInfo.objects.filter(StockID=x,HistoryTime__gte=t1,HistoryTime__lte=t2).order_by('-HistoryTime')[:100]
 		except StockInfo.DoesNotExist:
 			pass
 		except StockHistoryInfo.DoesNotExist:
 			pass
 		else:
-			return JsonResponse({"result":1,'history_info':JsonWrap(historyinfo)})
+			data = {"result":1,'HistoryInfo':JsonWrap(historyinfo)}
+			return JsonResponse(data)
 	else:
 		res = {}
 		res["result"] = 0
