@@ -118,21 +118,22 @@ function update_RealTime_table(){
             value: search_id,
         },
         function(data){
+          console.log(data);
           if(data.result==0)
             return;
-          document.getElementById('s_Price') = data.CurrentPrice;
-          //document.getElementById('s_AD') = data['AD'] + '%';
-          //document.getElementById('s_State') = data['State'];
+          document.getElementById('s_Price').innerHTML = Math.round(data.CurrentPrice*100)/100;
+          document.getElementById('s_AD').innerHTML = Math.round(data['A_D']*10000)/100 + '%';
+          document.getElementById('s_State').innerHTML = data['State'];
         },
         'json'
     );
-  setTimeout("update_RealTime_table()", 5000);
+  setTimeout("update_RealTime_table()", 1000);
 };
 
 
 $(function() {
   setTimeout("update_RealTime_chart()", 1000);
-  //update_RealTime_table();
+  update_RealTime_table();
 });
 var a = 1;
 var stock = d3.stock();
