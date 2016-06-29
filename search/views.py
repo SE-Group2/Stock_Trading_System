@@ -93,12 +93,15 @@ def refresh_1min(req):
 
 def search_history(req):
 	if req.method == 'POST':
-		stockid = req.POST.get('stockid')
+		stockinfo = req.POST.get('value')
 		starttime = req.POST.get('starttime')
 		endtime = req.POST.get('endtime')
 		try:
-			historyinfo = StockHistoryInfo.objects.filter(StockID=stockid,HistoryTime__gte=starttime,HistoryTime__lte=endtime)
+			x = StockInfo.objects.get(Q(StockID=stockinfo)|Q(StockName=stockinfo))
+			historyinfo = StockHistoryInfo.objects.filter(StockID=x,HistoryTime__gte=starttime,HistoryTime__lte=endtime).order_by('-HistoryTime')[:100]
 		except StockInfo.DoesNotExist:
+			pass
+		except StockHistoryInfo.DoesNotExist:
 			pass
 		else:
 			return JsonResponse({"result":1,'history_info':JsonWrap(historyinfo)})
@@ -106,6 +109,7 @@ def search_history(req):
 		res = {}
 		res["result"] = 0
 		return JsonResponse(res)
+
 
 def update_realtime(stockcurrentdata):
 	try:
