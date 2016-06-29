@@ -1,5 +1,6 @@
 {%extends "base.html" %}
 
+
 {% block stockGraph %}
           <h3>Real Time Chart</h3>
           <form id="edit-profile" class="form-horizontal" method="post" action="/search/"/>{% csrf_token %}
@@ -21,7 +22,7 @@
                   <th>State</th>
                 </tr>
               </thead>
-              
+
               <tbody>
                 <tr>
                   <td id="s_ID">{{stockid}}</td>
@@ -237,13 +238,36 @@ function draw_stock(data){
 
 
 {% block stockHistory %}
+
 <p>History Data Consult</p>
-<form id="edit-profile" class="form-horizontal" />
-  <label class="control-label">Input ID/Name</label>
+<form id="edit-profile1" class="form-horizontal" action="javascript:void(0)">
+  <label class="control-label"></br>Input ID/Name</label>
     <div class="controls">
-      <input type="text" class="input-medium disabled" id="search" />
-              
-    </div>
+      <input type="text" class="input-medium disabled" id="search1" />
+      <input type="submit" class="submit" style="margin-left:10%; margin-top:5%;" id="sub-mit1" value="Search"/>
+      {% csrf_token %}
+        <div>
+          <input id="datepicker-example1" class="input-medium" type="text">
+        </div>
+      </div>
   <br></br>
 </form>
-{% endblock %}        
+
+<script>
+  $('#sub-mit1').click(function() {
+    var stockInfo = $('#search1').val();
+    var searchTime = $('#datepicker-example1').val();
+    console.log(stockInfo);
+    console.log(searchTime);
+    $.ajax({
+      type:"POST",
+      url:"/shr",
+      data: {stockInfo:stockInfo, searchTime: searchTime},
+      success: function(result) {
+        console.log(result);
+      }
+    });
+    return false;
+  });
+</script>
+{% endblock %}
