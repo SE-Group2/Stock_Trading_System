@@ -3,15 +3,13 @@ import threading
 from time import sleep
 
 from django.shortcuts import render
-from database.models import StockInfo
 from .models import StockHistoryInfo
 from django.db.models import Q
 from datetime import datetime
 from django.http import HttpResponse,Http404
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from search.models import StockHistoryInfo
-from database.models import StockInfo
+from search.models import StockHistoryInfo, StockInfo
 from datetime import datetime
 import json
 import random
@@ -38,17 +36,19 @@ def main(req):
 		updateDbRegular.setDaemon(True)
 		updateDbRegular.start()
 		HasOpened = True
+	pk = random.randint(1,StockInfo.objects.count())
+	flag = 0
 	if req.method == 'POST':
 		stockinfo = req.POST.get('value')
 		try:
 			x = StockInfo.objects.get(Q(StockID=stockinfo)|Q(StockName=stockinfo))
 			historyinfo = StockHistoryInfo.objects.filter(StockID=x).order_by('-HistoryTime')[:100]
+			flag = 2
 		except StockInfo.DoesNotExist:
-			pass
+			flag = 1
 		except StockHistoryInfo.DoesNotExist:
-			pass
-	else:
-		pk = random.randint(1,StockInfo.objects.count())
+			flag = 1
+	if flag == 1 or flag == 0:
 		try:
 			x = StockInfo.objects.all()[pk-1]
 			historyinfo = StockHistoryInfo.objects.filter(StockID=x).order_by('-HistoryTime')[:100]
@@ -56,7 +56,7 @@ def main(req):
 			pass
 		except StockHistoryInfo.DoesNotExist:
 			pass
-	return render(req,'stock.html',{"stockid":x.StockID,"stockname":x.StockName,"data":json.dumps(JsonWrap(historyinfo))})
+	return render(req,'stock.html',{"flag":flag,"stockid":x.StockID,"stockname":x.StockName,"data":json.dumps(JsonWrap(historyinfo))})
 
 @csrf_exempt
 def refresh_5s(req):
@@ -119,7 +119,7 @@ def update_realtime(stockcurrentdata):
 
 
 def insert_history(stockhistoryinfo):
-	print stockhistoryinfo
+	# print stockhistoryinfo
 	try:
 		for stockid in stockhistoryinfo:
 			t = StockInfo.objects.get(StockID=stockid)
@@ -178,7 +178,7 @@ class UpdateDbRegular(threading.Thread):
 					maxvalue[i] = currentprice[i]
 				if currentprice[i] < minvalue[i]:
 					minvalue[i] = currentprice[i]
-			print data
+			# print data
 			update_realtime(data)
 
 			if count%12==11:
