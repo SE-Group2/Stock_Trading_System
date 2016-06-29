@@ -470,6 +470,212 @@
             stock.drawPrice();
             stock.drawIndicators();
         }
+
+        stock.reinitScale = function() {
+            // Scale
+            x = d3.scale.linear().range([0, width]).domain([0,data.length]);
+            x1 = d3.scale.linear().range([0, width]).domain([0,data.length]);
+
+            // Adjust domain for gap of top and bottom.
+            var min = d3.min(data, function(d) { return d.low; });
+            var max = d3.max(data, function(d) { return d.high; });
+            if(max == min) max += 10;
+            var gap = (max - min) / 10;
+            var domain = [min-gap, max+gap];
+
+            // y1 is price, y2 is volume.
+            y = d3.scale.linear().range([height,0]).domain(domain),
+            y1 = d3.scale.linear().range([height, 0]).domain(d3.extent(data, function(d) { d.close; })),
+            y2 = d3.scale.linear().range([height/5, 0]).domain([0, d3.max(data, function(d) { return d.volume; })]);
+        }
+
+        stock.redrawAxis = function() {
+
+            // Axis
+            var xAxis = d3.svg.axis().scale(x).orient("bottom").tickFormat(function(d){return stock.tickFormat(data[d].time);}).tickValues(ticks),
+            yAxis = d3.svg.axis().scale(y).orient("right").ticks(5);
+
+            // xAxis
+            axisLayer.selectAll('g')
+                .attr('class', 'x axis')
+                .attr('transform', 'translate('+ margin.left +',' + (height+margin.top) + ')')
+                .call(xAxis)
+        
+            // yAxis 
+            axisLayer.selectAll('g')
+                .attr('class', 'y axis')
+                .attr('transform', 'translate('+ (margin.left+width) +', '+ margin.top +')')
+                .call(yAxis)
+        
+            // Grid
+            var yAxisGrid = yAxis 
+               .tickSize(width, 0)
+               .tickFormat("")
+               .orient("right");
+        
+            var xAxisGrid = xAxis
+               .tickSize(-height, 0)
+               .tickFormat("")
+               .orient("top");
+        
+            axisLayer.selectAll("g")
+               .classed('y', true)
+               .classed('axis', true)
+               .call(yAxisGrid)
+               .attr('transform', 'translate('+margin.left+', '+margin.top+')');
+        
+            axisLayer.selectAll("g")
+               .classed('x', true)
+               .classed('axis', true)
+               .call(xAxisGrid)
+               .attr('transform', 'translate('+margin.left+', '+margin.top+')');
+        }
+
+        stock.redrawVolume = function() {
+
+            volumeLayer.selectAllAll("rect.volume")
+                .data(data)
+                .enter()
+                .selectAll("svg:rect")
+                .attr("x",function(d,i){
+                    return x1(i);
+                })
+                .attr("y", function(d) {
+                    return -y2(d.volume);
+                })
+                .attr("width",function(d){
+                    return width/data.length;
+                })
+                .attr("height",function(d){
+                    return y2(d.volume);
+                })
+                .attr("fill",function(d){ return d.open < d.close ? "#EFE3E3" : "#DEEEE0"; })
+                .attr("stroke",function(d){ return d.open < d.close ? "#D9CFCF" : "#C5D3C7"; })
+                .attr("stroke-width", 1)
+                .attr('transform', 'translate('+ margin.left +',' + (height+margin.top) + ')')
+        }
+
+        stock.redrawPrice = function() {
+
+            //Price chart.
+            switch(chartStyle) {
+                case "candles":
+                    priceLayer.selectAllAll("line.stem")
+                        .data(data)
+                        .enter().selectAll("svg:line")
+                        .attr("class", "stem")
+                        .attr("x1", function(d,i) { return Math.round(x1(i) + 0.35*width/data.length);})
+                        .attr("x2", function(d,i) { return Math.round(x1(i) + 0.35*width/data.length);})       
+                        .attr("y1", function(d) { return y(d.high);})
+                        .attr("y2", function(d) { return y(d.low); })
+                        .attr("stroke", "#5A5A5A")
+                        .attr("stroke-width", 1)
+                        .attr('transform', 'translate('+ margin.left +', '+ margin.top +')')
+                    priceLayer.selectAllAll("rect.k")
+                        .data(data)
+                        .enter().selectAll("svg:rect")
+                        .attr("x", function(d,i) { return x1(i); })
+                        .attr("y", function(d) { return y(d.open > d.close ? d.open : d.close);})
+                        .attr("height", function(d) {return d.open > d.close ? y(d.close) - y(d.open) : y(d.open) - y(d.close);})
+                        .attr("width", function(d) { return Math.round(0.7 * (width)/data.length); })
+                        .attr("fill",function(d) { return d.open > d.close ? "#6BA583" : "#D75442";})
+                        .attr("stroke",function(d){ return d.open > d.close ? "#386D4E" : "#A03A2D"; })
+                        .attr("stroke-width", 1)
+                        .attr('transform', 'translate('+ margin.left +', '+ margin.top +')')
+                    break;
+                case "line":
+                    var priceLine = d3.svg.line()
+                        .interpolate("monotone")
+                        .x(function(d, i){ return x1(i)})
+                        .y(function(d){ return y(d.close)});
+                    priceLayer.selectAll("path")
+                        .datum(data)
+                        .attr('transform', 'translate('+ margin.left +',0)')
+                        .style("stroke", "steelblue")
+                        .attr("class", "line")
+                        .attr("d", priceLine)
+                        .attr('transform', 'translate('+ margin.left +', ' + margin.top +')')
+                    break;
+                case "area":
+                    var priceLine = d3.svg.line()
+                        .interpolate("monotone")
+                        .x(function(d, i){ return x1(i)})
+                        .y(function(d){ return y(d.close)});
+                    priceLayer.selectAll("path")
+                        .datum(data)
+                        .attr('transform', 'translate('+ margin.left +',0)')
+                        .attr("class", "line")
+                        .attr("d", priceLine)
+                        .attr('transform', 'translate('+ margin.left +', ' + margin.top +')')
+
+                    var priceArea = d3.svg.area()
+                        .x(function(d, i) { return x1(i); })
+                        .y0(margin.top+height)
+                        .y1(function(d) { return y(d.close); });
+                    priceLayer.selectAll("path")
+                        .datum(data)
+                        .attr('transform', 'translate('+ margin.left +',0)')
+                        .attr("class", "line")
+                        .attr("d", priceArea)
+                        .attr("transform", "translate("+ margin.left +", " + margin.top +")")
+                        .style("fill", "steelblue")
+                        .style("stroke", "none")
+                        .style("opacity", 0.2);
+                    break;
+            }
+            stock.drawLastPrice();
+        }
+
+        stock.redrawLastPrice = function() {
+            var price = priceLayer.selectAll("svg:g")
+                .attr('transform', 'translate(' + (margin.left+width)+', ' + (margin.top+y(current.close)-9)+ ')')
+            price.selectAll('svg:rect').attr('width', 52)
+                .attr('height', 18)
+                .attr('fill', current.open > current.close ? "#6BA583" : "#D75442")
+            price.selectAll('svg:text')
+                .text(current.close.toFixed(2))
+                .attr("transform", "translate(3, 0)")
+                .attr("dy", "1em")
+                .style("fill", "#ffffff");
+        
+            chart.selectAll("svg:line")
+                .attr("x1", 0)
+                .attr("x2", margin.left+width)
+                .attr("y1", margin.top+y(current.close))
+                .attr("y2", margin.top+y(current.close))
+                .attr("stroke", current.open > current.close ? "#6BA583" : "#D75442")
+                .attr("stroke-width", 1)
+                .style("stroke-dasharray", ("3, 3"))
+                .style("stroke-opacity", 0.9);
+        }
+
+        stock.redrawIndicators = function() {
+            for(var i in indicators.active) {
+                var indicator = indicators.names[i];
+                var line = d3.svg.line()
+                    .interpolate("monotone")
+                    .x(function(d, i){ return x1(i)})
+                    .y(function(d){ return y(d[indicator])});
+                indicatorLayer.selectAll("path")
+                    .datum(data)
+                    .style("stroke", indicators.colors[indicator])
+                    .attr('transform', 'translate('+ margin.left +',0)')
+                    .attr("class", "line")
+                    .attr("d", line)
+                    .attr('transform', 'translate('+ margin.left +', ' + margin.top +')')
+            }
+        }
+        stock.refresh = function(gParent) {
+            gParent.each(function(d, i) {
+                data = d;
+            });
+            stock.reinitScale();
+//          stock.drawBackground();
+            stock.redrawAxis();
+            stock.redrawVolume();
+            stock.redrawPrice();
+            stock.redrawIndicators();
+        }
         return stock;
     }
 })();

@@ -10,6 +10,9 @@ from datetime import datetime
 from django.http import HttpResponse,Http404
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from search.models import StockHistoryInfo
+from database.models import StockInfo
+from datetime import datetime
 import json
 import random
 
@@ -24,6 +27,8 @@ def main(req):
 		updateDbRegular = UpdateDbRegular()
 		updateDbRegular.setDaemon(True)
 		updateDbRegular.start()
+		# initStock()
+		# zao_jia()
 		HasOpened = True
 	if req.method == 'POST':
 		stockinfo = req.POST.get('value')
@@ -37,13 +42,14 @@ def main(req):
 			x = StockInfo.objects.get(pk=pk)
 		except StockInfo.DoesNotExist:
 			pass
-	return render(req,'stock.html',{"stockid":x.StockID,"stockname":x.StockName,"data":json.dumps(JsonResp(x))})
+	res  = json.dumps(JsonResp(x))
+	return render(req,'stock.html',{"stockid":x.StockID,"stockname":x.StockName,"data":res})
 
 
 def JsonResp(x):
 	list = []
 	try:
-		historyinfo = StockHistoryInfo.objects.filter(StockID=x).order_by('-HistoryTime')[:20]
+		historyinfo = StockHistoryInfo.objects.filter(StockID=x).order_by('-HistoryTime')[:50]
 	except StockHistoryInfo.DoesNotExist:
 		pass
 	else:
@@ -51,6 +57,7 @@ def JsonResp(x):
 			s = i.HistoryTime.strftime("%a %b %d %H:%M:%S +0800 %Y")
 			x = {"volume":i.Volume_value,"open":i.Open_value,"high":i.Highest_value,"close":i.Close_value,"low":i.Lowest_value,"time":s}
 			list.append(x)
+		list.reverse()
 		data = {"symbol":"SHxxxxx","name":"aaaa","list":list}
 		return data
 
@@ -64,10 +71,9 @@ def refresh_5s(req):
 			pass
 		else:
 			return JsonResponse({'result':1,'StockID':x.StockID,'CurrentPrice':x.CurrentPrice})
-	else:
-		res = {}
-		res["result"] = 0
-		return JsonResponse(res)
+	res = {}
+	res["result"] = 0
+	return JsonResponse(res)
 
 @csrf_exempt
 def refresh_1min(req):
@@ -80,11 +86,11 @@ def refresh_1min(req):
 		except StockHistoryInfo.DoesNotExist:
 			pass
 		else:
-			return JsonResponse({"result":1,"data":JsonResp(x)})
-	else:
-		res = {}
-		res["result"] = 0
-		return JsonResponse(res)
+			res = JsonResp(x)
+			return JsonResponse({"result":1,"data":res})
+	res = {}
+	res["result"] = 0
+	return JsonResponse(res)
 
 
 def search_history(req):
@@ -139,6 +145,7 @@ def zao_jia():
 	x = StockHistoryInfo(StockID=StockInfo.objects.get(StockID="111111"), HistoryTime=dt, Open_value=a,
 							 Close_value=b, Highest_value=max(a, b, c, d), Lowest_value=min(a, b, c, d),
 							 Volume_value=1000, EMA12=0, EMA26=0, DIF=0, MACD=0)
+	print x.HistoryTime
 	x.save()
 
 	a = b
@@ -149,7 +156,7 @@ def zao_jia():
 	x = StockHistoryInfo(StockID=StockInfo.objects.get(StockID="222222"), HistoryTime=dt, Open_value=a,
 							 Close_value=b, Highest_value=max(a, b, c, d), Lowest_value=min(a, b, c, d),
 							 Volume_value=1000, EMA12=0, EMA26=0, DIF=0, MACD=0)
-	x.save()
+	# x.save()
 
 	a = b
 	b = random.random() * 10 + 5
@@ -159,8 +166,56 @@ def zao_jia():
 	x = StockHistoryInfo(StockID=StockInfo.objects.get(StockID="333333"), HistoryTime=dt, Open_value=a,
 							 Close_value=b, Highest_value=max(a, b, c, d), Lowest_value=min(a, b, c, d),
 							 Volume_value=1000, EMA12=0, EMA26=0, DIF=0, MACD=0)
+	# x.save()
+
+
+def initStock():
+
+	x = StockInfo(StockID="111111", StockName="baidu", CurrentPrice=10.3, A_D=0.2, UpLimit=100, DownLimit=1)
+	x.save()
+	x = StockInfo(StockID="222222", StockName="alipp", CurrentPrice=11.3, A_D=0.3, UpLimit=100, DownLimit=1)
+	x.save()
+	x = StockInfo(StockID="333333", StockName="qq", CurrentPrice=12.3, A_D=0.1, UpLimit=100, DownLimit=1)
 	x.save()
 
+	dt = datetime.now()
+
+	a = random.random() * 10 + 5
+	b = random.random() * 10 + 5
+	c = random.random() * 10 + 5
+	d = random.random() * 10 + 5
+	for i in xrange(1, 20):
+		a = b
+		b = random.random() * 10 + 5
+		c = random.random() * 10 + 5
+		d = random.random() * 10 + 5
+		dt = dt.replace(hour=i / 60, minute=i % 60)
+		x = StockHistoryInfo(StockID=StockInfo.objects.get(StockID="111111"), HistoryTime=dt, Open_value=a,
+							 Close_value=b, Highest_value=max(a, b, c, d), Lowest_value=min(a, b, c, d),
+							 Volume_value=1000, EMA12=0, EMA26=0, DIF=0, MACD=0)
+		x.save()
+
+	for i in xrange(1, 20):
+		a = b
+		b = random.random() * 10 + 5
+		c = random.random() * 10 + 5
+		d = random.random() * 10 + 5
+		dt = dt.replace(hour=i / 60, minute=i % 60)
+		x = StockHistoryInfo(StockID=StockInfo.objects.get(StockID="222222"), HistoryTime=dt, Open_value=a,
+							 Close_value=b, Highest_value=max(a, b, c, d), Lowest_value=min(a, b, c, d),
+							 Volume_value=1000, EMA12=0, EMA26=0, DIF=0, MACD=0)
+		x.save()
+
+	for i in xrange(1, 20):
+		a = b
+		b = random.random() * 10 + 5
+		c = random.random() * 10 + 5
+		d = random.random() * 10 + 5
+		dt = dt.replace(hour=i / 60, minute=i % 60)
+		x = StockHistoryInfo(StockID=StockInfo.objects.get(StockID="333333"), HistoryTime=dt, Open_value=a,
+							 Close_value=b, Highest_value=max(a, b, c, d), Lowest_value=min(a, b, c, d),
+							 Volume_value=1000, EMA12=0, EMA26=0, DIF=0, MACD=0)
+		x.save()
 
 class UpdateDbRegular(threading.Thread):
 
@@ -174,6 +229,5 @@ class UpdateDbRegular(threading.Thread):
 			dt = datetime.now()
 			data = {str(self.a): 12.23}
 			zao_jia()
-			print "test"
-			update_realtime(data)
+			# update_realtime(data)
 			sleep(5)

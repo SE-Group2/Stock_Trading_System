@@ -18,4 +18,4 @@ class StockHistoryInfo(models.Model):
 	MACD = models.FloatField()
 
 	def __str__(self):
-		return self.StockID.StockName
+		return self.StockID.StockName + " " +self.HistoryTime.strftime("%a %b %d %H:%M:%S +0800 %Y")
