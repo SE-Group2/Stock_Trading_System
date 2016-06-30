@@ -1,6 +1,6 @@
 from django.contrib import admin
-from .models import StockHistoryInfo, StockInfo
+from .models import StockInfo,StockHistoryInfo
 
 # Register your models here.
-admin.site.register(StockHistoryInfo)
 admin.site.register(StockInfo)
+admin.site.register(StockHistoryInfo)
